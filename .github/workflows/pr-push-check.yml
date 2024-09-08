@@ -23,6 +23,20 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: database
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -30,7 +44,17 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Wait for PostgreSQL
+        run: |
+          while ! nc -z localhost 5432; do
+            echo "Waiting for PostgreSQL..."
+            sleep 1
+          done
+        shell: bash
+
       - name: Test
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/database
         run: pnpm run test
 
   lint:
