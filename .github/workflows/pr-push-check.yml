@@ -41,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - name: Setup
+      - name: Common Setup
         uses: ./.github/actions/setup
 
       - name: Wait for PostgreSQL
@@ -51,6 +51,11 @@ jobs:
             sleep 1
           done
         shell: bash
+
+      - name: Migration
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/database
+        run: pnpm run migration:apply
 
       - name: Test
         env:
