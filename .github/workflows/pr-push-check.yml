@@ -44,14 +44,6 @@ jobs:
       - name: Common Setup
         uses: ./.github/actions/setup
 
-      - name: Wait for PostgreSQL
-        run: |
-          while ! nc -z localhost 5432; do
-            echo "Waiting for PostgreSQL..."
-            sleep 1
-          done
-        shell: bash
-
       - name: Migration
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/database
