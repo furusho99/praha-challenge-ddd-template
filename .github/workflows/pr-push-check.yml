@@ -55,6 +55,11 @@ jobs:
       - name: Migration
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/database
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: password
+          DB_NAME: database
         run: pnpm run migration:apply
 
       - name: Test
