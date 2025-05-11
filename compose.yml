@@ -7,14 +7,23 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=database
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d database -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -d database -U postgres']
       interval: 5s
       timeout: 5s
       retries: 12
     ports:
-      - 5432:5432
+      - 5433:5432
     volumes:
       - database-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: app
+    command: pnpm run dev
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
 
 volumes:
   database-data:
